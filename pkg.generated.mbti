@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "moonbit-community/jsondiff"
+
+// Values
+pub fn calculate_ratio(Int, Int) -> Double
+
+// Errors
+
+// Types and methods
+pub struct JsonDiff {
+  score : Double
+  diff : Json?
+}
+pub fn JsonDiff::diff(Json, Json, keys_only? : Bool) -> Self
+pub fn JsonDiff::diff_string(Json, Json, keys_only~ : Bool) -> String?
+pub impl Show for JsonDiff
+
+// Type aliases
+
+// Traits
+
