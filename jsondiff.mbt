@@ -9,7 +9,7 @@ struct JsonDiff {
   /// The JSON structural difference of two JSON files.
   /// If None: the two JSON files are identical.
   diff : JsonEdit?
-} derive(Show)
+}
 
 ///|
 priv struct BestMatch {
@@ -44,16 +44,17 @@ pub fn JsonDiff::diff_string(
   json1 : Json,
   json2 : Json,
   keys_only~ : Bool,
+  terminal? : Bool = false,
 ) -> String? {
   let jsondiff = JsonDiff::diff(json1, json2, keys_only~)
-  jsondiff.stringify()
+  jsondiff.stringify(terminal~)
 }
 
 ///|
-fn JsonDiff::stringify(self : JsonDiff) -> String? {
+fn JsonDiff::stringify(self : JsonDiff, terminal~ : Bool) -> String? {
   match self.diff {
     None => None
-    Some(value) => ...
+    Some(value) => Some(value.stringify(terminal~))
   }
 }
 

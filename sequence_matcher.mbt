@@ -16,7 +16,7 @@ priv enum OpTag {
   Insert
   Delete
   Replace
-} derive(Eq, Show)
+} derive(Eq)
 
 ///|
 priv struct OpCode {
@@ -25,7 +25,7 @@ priv struct OpCode {
   first_end : Int
   second_start : Int
   second_end : Int
-} derive(Show)
+}
 
 ///|
 fn OpCode::new(

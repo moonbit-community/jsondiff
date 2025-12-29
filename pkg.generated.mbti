@@ -2,18 +2,21 @@
 package "moonbit-community/jsondiff"
 
 // Values
-pub fn calculate_ratio(Int, Int) -> Double
 
 // Errors
 
 // Types and methods
-pub struct JsonDiff {
-  score : Double
-  diff : Json?
-}
+type JsonArrayEdit
+pub impl Eq for JsonArrayEdit
+pub impl Show for JsonArrayEdit
+
+type JsonDiff
 pub fn JsonDiff::diff(Json, Json, keys_only? : Bool) -> Self
-pub fn JsonDiff::diff_string(Json, Json, keys_only~ : Bool) -> String?
-pub impl Show for JsonDiff
+pub fn JsonDiff::diff_string(Json, Json, keys_only~ : Bool, terminal? : Bool) -> String?
+
+type JsonEdit
+pub impl Eq for JsonEdit
+pub impl Show for JsonEdit
 
 // Type aliases
 
