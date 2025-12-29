@@ -14,14 +14,22 @@ test "test objects" {
     JsonDiff::diff({ "foo": 42, "bar": 10 }, { "foo": 42, "bar": 10 }).diff,
     None,
   )
-  @json.inspect(
-    JsonDiff::diff({ "foo": 42, "bar": { "bbbar": 10, "bbboz": 11 } }, {
-      "foo": 42,
-      "bar": { "bbbar": 12 },
-    }).diff,
-    content=[
-      { "bar": { "bbboz__deleted": 11, "bbbar": { "__old": 10, "__new": 12 } } },
-    ],
+  let old : Json = { "foo": 42, "bar": { "bbbar": 10, "bbboz": 11 } }
+  let new : Json = { "foo": 42, "bar": { "bbbar": 12 } }
+  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+    { "bar": { "bbboz__deleted": 11, "bbbar": { "__old": 10, "__new": 12 } } },
+  ])
+  inspect(
+    JsonDiff::diff_string(old, new).unwrap(),
+    content=(
+      #| {
+      #|   bar: {
+      #|-    bbboz: 11
+      #|-    bbbar: 10
+      #|+    bbbar: 12
+      #|   }
+      #| }
+    ),
   )
 }
 
@@ -62,43 +70,89 @@ test "array of objects" {
     ]).diff,
     None,
   )
-  @json.inspect(
-    JsonDiff::diff([{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }], [
-      { "foo": 10 },
-      { "foo": 30 },
-    ]).diff,
-    content=[[[" "], ["-", { "foo": 20 }], [" "]]],
+  let old : Json = [{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }]
+  let new : Json = [{ "foo": 10 }, { "foo": 30 }]
+  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+    [[" "], ["-", { "foo": 20 }], [" "]],
+  ])
+  inspect(
+    JsonDiff::diff_string(old, new).unwrap(),
+    content=(
+      #| [
+      #|   ...
+      #|-  {
+      #|-    foo: 20
+      #|-  }
+      #|   ...
+      #| ]
+    ),
   )
-  @json.inspect(
-    JsonDiff::diff([{ "foo": 10 }, { "foo": 30 }], [
-      { "foo": 10 },
-      { "foo": 20 },
-      { "foo": 30 },
-    ]).diff,
-    content=[[[" "], ["+", { "foo": 20 }], [" "]]],
+  let old : Json = [{ "foo": 10 }, { "foo": 30 }]
+  let new : Json = [{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }]
+  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+    [[" "], ["+", { "foo": 20 }], [" "]],
+  ])
+  inspect(
+    JsonDiff::diff_string(old, new).unwrap(),
+    content=(
+      #| [
+      #|   ...
+      #|+  {
+      #|+    foo: 20
+      #|+  }
+      #|   ...
+      #| ]
+    ),
   )
-  @json.inspect(
-    JsonDiff::diff([{ "name": "Foo", "a": 3, "b": 1 }, { "foo": 10 }], [
-      { "name": "Foo", "a": 3, "b": 1 },
-      { "name": "Foo", "a": 3, "b": 1, "c": 1 },
-      { "foo": 10 },
-    ]).diff,
-    content=[[[" "], ["+", { "name": "Foo", "a": 3, "b": 1, "c": 1 }], [" "]]],
+  let old : Json = [{ "name": "Foo", "a": 3, "b": 1 }, { "foo": 10 }]
+  let new : Json = [
+    { "name": "Foo", "a": 3, "b": 1 },
+    { "name": "Foo", "a": 3, "b": 1, "c": 1 },
+    { "foo": 10 },
+  ]
+  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+    [[" "], ["+", { "name": "Foo", "a": 3, "b": 1, "c": 1 }], [" "]],
+  ])
+  inspect(
+    JsonDiff::diff_string(old, new).unwrap(),
+    content=(
+      #| [
+      #|   ...
+      #|+  {
+      #|+    name: "Foo"
+      #|+    a: 3
+      #|+    b: 1
+      #|+    c: 1
+      #|+  }
+      #|   ...
+      #| ]
+    ),
   )
-  @json.inspect(
-    JsonDiff::diff(
-      [
-        { "foo": 10, "bar": { "bbbar": 10, "bbboz": 11 } },
-        { "foo": 20, "bar": { "bbbar": 50, "bbboz": 25 } },
-        { "foo": 30, "bar": { "bbbar": 92, "bbboz": 34 } },
-      ],
-      [
-        { "foo": 10, "bar": { "bbbar": 10, "bbboz": 11 } },
-        { "foo": 21, "bar": { "bbbar": 50, "bbboz": 25 } },
-        { "foo": 30, "bar": { "bbbar": 92, "bbboz": 34 } },
-      ],
-    ).diff,
-    content=[[[" "], ["~", { "foo": { "__old": 20, "__new": 21 } }], [" "]]],
+  let old : Json = [
+    { "foo": 10, "bar": { "bbbar": 10, "bbboz": 11 } },
+    { "foo": 20, "bar": { "bbbar": 50, "bbboz": 25 } },
+    { "foo": 30, "bar": { "bbbar": 92, "bbboz": 34 } },
+  ]
+  let new : Json = [
+    { "foo": 10, "bar": { "bbbar": 10, "bbboz": 11 } },
+    { "foo": 21, "bar": { "bbbar": 50, "bbboz": 25 } },
+    { "foo": 30, "bar": { "bbbar": 92, "bbboz": 34 } },
+  ]
+  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+    [[" "], ["~", { "foo": { "__old": 20, "__new": 21 } }], [" "]],
+  ])
+  inspect(
+    JsonDiff::diff_string(old, new).unwrap(),
+    content=(
+      #| [
+      #|   ...
+      #|   {
+      #|-    foo: 20
+      #|+    foo: 21
+      #|   }
+      #|   ...
+      #| ]
+    ),
   )
 }
 

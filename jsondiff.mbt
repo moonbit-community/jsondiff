@@ -43,7 +43,7 @@ pub fn JsonDiff::diff(
 pub fn JsonDiff::diff_string(
   json1 : Json,
   json2 : Json,
-  keys_only~ : Bool,
+  keys_only? : Bool = false,
   terminal? : Bool = false,
 ) -> String? {
   let jsondiff = JsonDiff::diff(json1, json2, keys_only~)

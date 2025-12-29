@@ -18,7 +18,7 @@ fn json_substringify(
   let subindent = indent + 2
   match json {
     Object(object) => {
-      output.push("\{String::make(indent, ' ')}\{prefix}{")
+      output.push_line(tag, "\{String::make(indent, ' ')}\{prefix}{")
       for subkey, subvalue in object.iterator2() {
         json_substringify(Some(subkey), subvalue, output, tag, subindent)
       }
@@ -29,11 +29,12 @@ fn json_substringify(
       for subvalue in arr {
         json_substringify(None, subvalue, output, tag, subindent)
       }
+      output.push_line(tag, "\{String::make(indent, ' ')}]")
     }
     json =>
       output.push_line(
         tag,
-        String::make(indent, ' ') + prefix + json.to_string(),
+        String::make(indent, ' ') + prefix + json.stringify(),
       )
   }
 }
@@ -51,7 +52,7 @@ fn substringify(
   match jsonedit {
     Replace(old~, new~) => {
       json_substringify(key, old, output, "-", indent)
-      json_substringify(key, new, output, "-", indent)
+      json_substringify(key, new, output, "+", indent)
     }
     Array(edits) => {
       output.push_line(tag, "\{String::make(indent, ' ')}\{prefix}[")
