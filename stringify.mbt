@@ -94,15 +94,7 @@ let output_colorful_text_for_terminal : Ref[Bool] = Ref::new(false)
 fn Array::push_line(self : Array[String], tag : String, line : String) -> Unit {
   let tagged_line = "\{tag}\{line}"
   if output_colorful_text_for_terminal.val {
-    match tag {
-      "+" =>
-        // green
-        self.push("\u{1b}[32m\{tag}\{line}\u{1b}[0m")
-      "-" =>
-        // red
-        self.push("\u{1b}[31m\{tag}\{line}\u{1b}[0m")
-      _ => self.push(tagged_line)
-    }
+    ...
   } else {
     self.push(tagged_line)
   }
