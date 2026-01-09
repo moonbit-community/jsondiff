@@ -19,7 +19,7 @@ fn json_substringify(
   match json {
     Object(object) => {
       output.push_line(tag, "\{String::make(indent, ' ')}\{prefix}{")
-      for subkey, subvalue in object.iterator2() {
+      for subkey, subvalue in object.iter2() {
         json_substringify(Some(subkey), subvalue, output, tag, subindent)
       }
       output.push_line(tag, "\{String::make(indent, ' ')}}")
@@ -73,13 +73,13 @@ fn substringify(
     }
     Object(diff, added~, deleted~) => {
       output.push_line(tag, "\{String::make(indent, ' ')}\{prefix}{")
-      for key, value in deleted.iterator2() {
+      for key, value in deleted.iter2() {
         json_substringify(Some(key), value, output, "-", subindent)
       }
-      for key, value in added.iterator2() {
+      for key, value in added.iter2() {
         json_substringify(Some(key), value, output, "+", subindent)
       }
-      for key, value in diff.iterator2() {
+      for key, value in diff.iter2() {
         substringify(Some(key), value, output, " ", subindent)
       }
       output.push_line(tag, "\{String::make(indent, ' ')}}")

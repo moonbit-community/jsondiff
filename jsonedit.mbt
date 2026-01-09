@@ -22,13 +22,13 @@ impl ToJson for JsonEdit with to_json(self) {
   match self {
     Object(object, added~, deleted~) => {
       let result = {}
-      for key, value in deleted.iterator2() {
+      for key, value in deleted.iter2() {
         result[key + "__deleted"] = value
       }
-      for key, value in added.iterator2() {
+      for key, value in added.iter2() {
         result[key + "__added"] = value
       }
-      for key, value in object.iterator2() {
+      for key, value in object.iter2() {
         result[key] = value.to_json()
       }
       return Json::object(result)

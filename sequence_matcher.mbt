@@ -96,7 +96,7 @@ fn[T : Eq + Hash] SequenceMatcher::chain_second_seq(
 ) -> Unit {
   let second_sequence = self.second_sequence
   let mut second_sequence_elements = @hashmap.HashMap::new()
-  for i, item in second_sequence.iterator2() {
+  for i, item in second_sequence.iter2() {
     let counter = second_sequence_elements.get_or_init(item, () => Array::new())
     counter.push(i)
   }
@@ -107,7 +107,7 @@ fn[T : Eq + Hash] SequenceMatcher::chain_second_seq(
     let test_len = (len.to_double() / 100.0).floor().to_int() + 1
     let after_filter = @hashmap.HashMap::new()
     second_sequence_elements
-    .iterator()
+    .iter()
     .each(fn(entry) {
       let (element, indexes) = entry
       if indexes.length() > test_len {

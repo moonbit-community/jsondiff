@@ -70,7 +70,7 @@ fn JsonDiff::object_diff(
   let mut score = 0.0
 
   // Check for deleted keys
-  for key, value1 in obj1.iterator2() {
+  for key, value1 in obj1.iter2() {
     if !obj2.contains(key) {
       deleted[key] = value1
       score -= 30.0
@@ -78,7 +78,7 @@ fn JsonDiff::object_diff(
   }
 
   // Check for added keys
-  for key, value2 in obj2.iterator2() {
+  for key, value2 in obj2.iter2() {
     if !obj1.contains(key) {
       added[key] = value2
       score -= 30.0
@@ -86,7 +86,7 @@ fn JsonDiff::object_diff(
   }
 
   // Check for modified keys
-  for key, value1 in obj1.iterator2() {
+  for key, value1 in obj1.iter2() {
     if obj2.get(key) is Some(value2) {
       score += 20.0
       let { score: subscore, diff: change } = JsonDiff::diff_with_score(
@@ -133,7 +133,7 @@ fn JsonDiff::find_matching_object(
   let mut match_index = 0
 
   // rely on stable iter order
-  for key, candidate in fuzzy_originals.iterator2() {
+  for key, candidate in fuzzy_originals.iter2() {
     let index_distance = match_index
       .reinterpret_as_uint()
       .sub(index.reinterpret_as_uint()) // wrapped sub
@@ -169,7 +169,7 @@ fn JsonDiff::scalarize(
   fuzzy_originals : Map[String, Json]?,
 ) -> Array[String] {
   let output_array = Array::new()
-  for index, item in array.iterator2() {
+  for index, item in array.iter2() {
     let mut value : String? = match item {
       Json::Object(_) => None
       _ => {
