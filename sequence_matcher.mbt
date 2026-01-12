@@ -1,4 +1,5 @@
 ///|
+#valtype
 priv struct Match {
   first_start : Int
   second_start : Int
