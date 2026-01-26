@@ -2,7 +2,7 @@
 test "test scalar" {
   assert_eq(JsonDiff::diff(42, 42).diff, None)
   assert_eq(JsonDiff::diff("foo", "foo").diff, None)
-  @json.inspect(JsonDiff::diff(42, 10).diff, content=[
+  json_inspect(JsonDiff::diff(42, 10).diff, content=[
     { "__old": 42, "__new": 10 },
   ])
 }
@@ -16,7 +16,7 @@ test "test objects" {
   )
   let old : Json = { "foo": 42, "bar": { "bbbar": 10, "bbboz": 11 } }
   let new : Json = { "foo": 42, "bar": { "bbbar": 12 } }
-  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+  json_inspect(JsonDiff::diff(old, new).diff, content=[
     { "bar": { "bbboz__deleted": 11, "bbbar": { "__old": 10, "__new": 12 } } },
   ])
   inspect(
@@ -72,7 +72,7 @@ test "array of objects" {
   )
   let old : Json = [{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }]
   let new : Json = [{ "foo": 10 }, { "foo": 30 }]
-  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+  json_inspect(JsonDiff::diff(old, new).diff, content=[
     [[" "], ["-", { "foo": 20 }], [" "]],
   ])
   inspect(
@@ -89,7 +89,7 @@ test "array of objects" {
   )
   let old : Json = [{ "foo": 10 }, { "foo": 30 }]
   let new : Json = [{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }]
-  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+  json_inspect(JsonDiff::diff(old, new).diff, content=[
     [[" "], ["+", { "foo": 20 }], [" "]],
   ])
   inspect(
@@ -110,7 +110,7 @@ test "array of objects" {
     { "name": "Foo", "a": 3, "b": 1, "c": 1 },
     { "foo": 10 },
   ]
-  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+  json_inspect(JsonDiff::diff(old, new).diff, content=[
     [[" "], ["+", { "name": "Foo", "a": 3, "b": 1, "c": 1 }], [" "]],
   ])
   inspect(
@@ -138,7 +138,7 @@ test "array of objects" {
     { "foo": 21, "bar": { "bbbar": 50, "bbboz": 25 } },
     { "foo": 30, "bar": { "bbbar": 92, "bbboz": 34 } },
   ]
-  @json.inspect(JsonDiff::diff(old, new).diff, content=[
+  json_inspect(JsonDiff::diff(old, new).diff, content=[
     [[" "], ["~", { "foo": { "__old": 20, "__new": 21 } }], [" "]],
   ])
   inspect(
@@ -175,11 +175,11 @@ test "scalar keys" {
     ).diff,
     None,
   )
-  @json.inspect(
+  json_inspect(
     JsonDiff::diff({ "foo": 42, "bar": 10 }, { "bar": 10 }, keys_only=true).diff,
     content=[{ "foo__deleted": 42 }],
   )
-  @json.inspect(
+  json_inspect(
     JsonDiff::diff({ "bar": 10 }, { "foo": 42, "bar": 10 }, keys_only=true).diff,
     content=[{ "foo__added": 42 }],
   )
@@ -195,7 +195,7 @@ test "scalar keys" {
     ).diff,
     None,
   )
-  @json.inspect(
+  json_inspect(
     JsonDiff::diff(
       { "foo": 42, "bar": { "bbbar": 10, "bbboz": 11 } },
       { "foo": 42, "bar": { "bbbar": 12 } },
@@ -215,13 +215,13 @@ test "array of scalar keys" {
     JsonDiff::diff([10, 20, 30], [10, 42, 30], keys_only=true).diff,
     None,
   )
-  @json.inspect(JsonDiff::diff([10, 20, 30], [10, 30], keys_only=true).diff, content=[
+  json_inspect(JsonDiff::diff([10, 20, 30], [10, 30], keys_only=true).diff, content=[
     [[" ", 10], ["-", 20], [" ", 30]],
   ])
-  @json.inspect(JsonDiff::diff([10, 30], [10, 20, 30], keys_only=true).diff, content=[
+  json_inspect(JsonDiff::diff([10, 30], [10, 20, 30], keys_only=true).diff, content=[
     [[" ", 10], ["+", 20], [" ", 30]],
   ])
-  @json.inspect(JsonDiff::diff([10, 20], [10, 20, 30], keys_only=true).diff, content=[
+  json_inspect(JsonDiff::diff([10, 20], [10, 20, 30], keys_only=true).diff, content=[
     [[" ", 10], [" ", 20], ["+", 30]],
   ])
 }
@@ -246,7 +246,7 @@ test "array of object keys" {
     ).diff,
     None,
   )
-  @json.inspect(
+  json_inspect(
     JsonDiff::diff(
       [{ "foo": 10 }, { "foo": 30 }],
       [{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }],
