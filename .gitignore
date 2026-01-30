@@ -3,3 +3,6 @@ _build
 target
 .mooncakes/
 .moonagent/
+
+_build/
+target/
