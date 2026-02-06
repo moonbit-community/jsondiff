@@ -30,23 +30,23 @@ fn BestMatch::new(
 ///|
 /// Finds the JSON structural difference of two JSON files.
 pub fn JsonDiff::diff(
-  json1 : Json,
-  json2 : Json,
+  lhs : Json,
+  rhs : Json,
   keys_only? : Bool = false,
 ) -> JsonDiff {
-  JsonDiff::diff_with_score(json1, json2, keys_only)
+  JsonDiff::diff_with_score(lhs, rhs, keys_only)
 }
 
 ///|
 /// Finds the JSON structural difference of two JSON files and
 /// returns it as a formatted string.
 pub fn JsonDiff::diff_string(
-  json1 : Json,
-  json2 : Json,
+  lhs : Json,
+  rhs : Json,
   keys_only? : Bool = false,
   terminal? : Bool = false,
 ) -> String? {
-  let jsondiff = JsonDiff::diff(json1, json2, keys_only~)
+  let jsondiff = JsonDiff::diff(lhs, rhs, keys_only~)
   jsondiff.stringify(terminal~)
 }
 
