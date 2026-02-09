@@ -43,7 +43,6 @@ fn OpCode::new(
 priv struct SequenceMatcher[T] {
   mut first_sequence : Array[T]
   mut second_sequence : Array[T]
-  mut matching_blocks : Array[Match]?
   mut second_sequence_elements : @hashmap.HashMap[T, Array[Int]]
 }
 
@@ -55,7 +54,6 @@ fn[T : Eq + Hash] SequenceMatcher::new(
   let matcher = SequenceMatcher::{
     first_sequence,
     second_sequence,
-    matching_blocks: None,
     second_sequence_elements: @hashmap.HashMap::new(),
   }
   matcher.set_seqs(first_sequence, second_sequence)
@@ -78,7 +76,6 @@ fn[T] SequenceMatcher::set_first_seq(
   sequence : Array[T],
 ) -> Unit {
   self.first_sequence = sequence
-  self.matching_blocks = None
 }
 
 ///|
@@ -87,7 +84,6 @@ fn[T : Eq + Hash] SequenceMatcher::set_second_seq(
   sequence : Array[T],
 ) -> Unit {
   self.second_sequence = sequence
-  self.matching_blocks = None
   self.chain_second_seq()
 }
 
@@ -185,12 +181,9 @@ fn[T : Eq + Hash] SequenceMatcher::find_longest_match(
 }
 
 ///|
-fn[T : Eq + Hash] SequenceMatcher::get_matching_blocks(
+fn[T : Eq + Hash] SequenceMatcher::get_opcodes(
   self : SequenceMatcher[T],
-) -> Array[Match] {
-  if self.matching_blocks is Some(blocks) {
-    return blocks
-  }
+) -> Array[OpCode] {
   let first_length = self.first_sequence.length()
   let second_length = self.second_sequence.length()
   let matches = Array::new()
@@ -257,18 +250,10 @@ fn[T : Eq + Hash] SequenceMatcher::get_matching_blocks(
     non_adjacent.push(Match::new(first_start, second_start, size))
   }
   non_adjacent.push(Match::new(first_length, second_length, 0))
-  self.matching_blocks = Some(non_adjacent)
-  non_adjacent
-}
-
-///|
-fn[T : Eq + Hash] SequenceMatcher::get_opcodes(
-  self : SequenceMatcher[T],
-) -> Array[OpCode] {
   let opcodes = Array::new()
   let mut i = 0
   let mut j = 0
-  for m in self.get_matching_blocks() {
+  for m in non_adjacent {
     let tag = if i < m.first_start && j < m.second_start {
       Some(OpTag::Replace)
     } else if i < m.first_start {
