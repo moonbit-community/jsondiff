@@ -60,8 +60,8 @@ fn JsonDiff::stringify(self : JsonDiff, terminal~ : Bool) -> String? {
 
 ///|
 fn JsonDiff::object_diff(
-  obj1 : Map[String, Json],
-  obj2 : Map[String, Json],
+  lhs : Map[String, Json],
+  rhs : Map[String, Json],
   keys_only : Bool,
 ) -> JsonDiff {
   let diff = Map::new()
@@ -70,27 +70,27 @@ fn JsonDiff::object_diff(
   let mut score = 0.0
 
   // Check for deleted keys
-  for key, value1 in obj1.iter2() {
-    if !obj2.contains(key) {
-      deleted[key] = value1
+  for key, value in lhs.iter2() {
+    if !rhs.contains(key) {
+      deleted[key] = value
       score -= 30.0
     }
   }
 
   // Check for added keys
-  for key, value2 in obj2.iter2() {
-    if !obj1.contains(key) {
-      added[key] = value2
+  for key, value in rhs.iter2() {
+    if !lhs.contains(key) {
+      added[key] = value
       score -= 30.0
     }
   }
 
   // Check for modified keys
-  for key, value1 in obj1.iter2() {
-    if obj2.get(key) is Some(value2) {
+  for key, value in lhs.iter2() {
+    if rhs.get(key) is Some(rhs_value) {
       score += 20.0
       let { score: subscore, diff: change } = JsonDiff::diff_with_score(
-        value1, value2, keys_only,
+        value, rhs_value, keys_only,
       )
       if change is Some(change_value) {
         diff[key] = change_value
@@ -100,7 +100,7 @@ fn JsonDiff::object_diff(
   }
   if diff.is_empty() && deleted.is_empty() && added.is_empty() {
     JsonDiff::{
-      score: 100.0 * @cmp.maximum(obj1.length().to_double(), 0.5),
+      score: 100.0 * @cmp.maximum(lhs.length().to_double(), 0.5),
       diff: None,
     }
   } else {
@@ -110,8 +110,8 @@ fn JsonDiff::object_diff(
 }
 
 ///|
-fn JsonDiff::check_type(item1 : Json, item2 : Json) -> Bool {
-  match (item1, item2) {
+fn JsonDiff::check_type(lhs : Json, rhs : Json) -> Bool {
+  match (lhs, rhs) {
     (Json::Null, Json::Null)
     | (Json::True, Json::True)
     | (Json::False, Json::False)
@@ -230,30 +230,30 @@ fn JsonDiff::descalarize(
 
 ///|
 fn JsonDiff::array_diff(
-  array1 : Array[Json],
-  array2 : Array[Json],
+  lhs : Array[Json],
+  rhs : Array[Json],
   keys_only : Bool,
 ) -> JsonDiff {
   let counter = Ref::new(1)
-  let originals1 = Map::new()
-  let scalar_values1 = Map::new()
-  let seq1 = JsonDiff::scalarize(
+  let lhs_originals = Map::new()
+  let lhs_scalar_values = Map::new()
+  let lhs_seq = JsonDiff::scalarize(
     counter,
-    array1,
-    scalar_values1,
-    originals1,
+    lhs,
+    lhs_scalar_values,
+    lhs_originals,
     None,
   )
-  let originals2 = Map::new()
-  let scalar_values2 = Map::new()
-  let seq2 = JsonDiff::scalarize(
+  let rhs_originals = Map::new()
+  let rhs_scalar_values = Map::new()
+  let rhs_seq = JsonDiff::scalarize(
     counter,
-    array2,
-    scalar_values2,
-    originals2,
-    Some(originals1),
+    rhs,
+    rhs_scalar_values,
+    rhs_originals,
+    Some(lhs_originals),
   )
-  let opcodes = SequenceMatcher::new(seq1, seq2).get_opcodes()
+  let opcodes = SequenceMatcher::new(lhs_seq, rhs_seq).get_opcodes()
   let result = Array::new()
   let mut score = 0.0
   let mut all_equal = true
@@ -264,19 +264,24 @@ fn JsonDiff::array_diff(
     match opcode.tag {
       Equal =>
         for i = opcode.first_start; i < opcode.first_end; i = i + 1 {
-          let key = seq1[i]
-          let is_scalarized1 = JsonDiff::is_scalarized(key, originals1)
-          guard !is_scalarized1 || JsonDiff::is_scalarized(key, originals2) else {
+          let key = lhs_seq[i]
+          let lhs_is_scalarized = JsonDiff::is_scalarized(key, lhs_originals)
+          guard !lhs_is_scalarized ||
+            JsonDiff::is_scalarized(key, rhs_originals) else {
             abort(
               "Internal bug: the items associated to the key \{key} are different in the two dictionaries",
             )
           }
-          if is_scalarized1 {
-            let item1 = JsonDiff::descalarize(key, scalar_values1, originals1)
-            let item2 = JsonDiff::descalarize(key, scalar_values2, originals2)
+          if lhs_is_scalarized {
+            let lhs_item = JsonDiff::descalarize(
+              key, lhs_scalar_values, lhs_originals,
+            )
+            let rhs_item = JsonDiff::descalarize(
+              key, rhs_scalar_values, rhs_originals,
+            )
             let { score: _, diff: change } = JsonDiff::diff(
-              item1,
-              item2,
+              lhs_item,
+              rhs_item,
               keys_only~,
             )
             if change is Some(change) {
@@ -287,24 +292,32 @@ fn JsonDiff::array_diff(
             }
           } else {
             result.push(
-              Some(NoChange(JsonDiff::get_scalar(key, scalar_values1))),
+              Some(NoChange(JsonDiff::get_scalar(key, lhs_scalar_values))),
             )
           }
           score += 10.0
         }
       Delete =>
         for i = opcode.first_start; i < opcode.first_end; i = i + 1 {
-          let key = seq1[i]
+          let key = lhs_seq[i]
           result.push(
-            Some(Delete(JsonDiff::descalarize(key, scalar_values1, originals1))),
+            Some(
+              Delete(
+                JsonDiff::descalarize(key, lhs_scalar_values, lhs_originals),
+              ),
+            ),
           )
           score -= 5.0
         }
       Insert =>
         for i = opcode.second_start; i < opcode.second_end; i = i + 1 {
-          let key = seq2[i]
+          let key = rhs_seq[i]
           result.push(
-            Some(Insert(JsonDiff::descalarize(key, scalar_values2, originals2))),
+            Some(
+              Insert(
+                JsonDiff::descalarize(key, rhs_scalar_values, rhs_originals),
+              ),
+            ),
           )
           score -= 5.0
         }
@@ -315,11 +328,11 @@ fn JsonDiff::array_diff(
             opcode.second_end - opcode.second_start,
           )
           for offset = 0; offset < min_len; offset = offset + 1 {
-            let key1 = seq1[opcode.first_start + offset]
-            let key2 = seq2[opcode.second_start + offset]
+            let lhs_key = lhs_seq[opcode.first_start + offset]
+            let rhs_key = rhs_seq[opcode.second_start + offset]
             let { score: _, diff: change } = JsonDiff::diff(
-              JsonDiff::descalarize(key1, scalar_values1, originals1),
-              JsonDiff::descalarize(key2, scalar_values2, originals2),
+              JsonDiff::descalarize(lhs_key, lhs_scalar_values, lhs_originals),
+              JsonDiff::descalarize(rhs_key, rhs_scalar_values, rhs_originals),
               keys_only~,
             )
             match change {
@@ -333,19 +346,23 @@ fn JsonDiff::array_diff(
         } else {
           // Handle as delete then insert
           for i = opcode.first_start; i < opcode.first_end; i = i + 1 {
-            let key = seq1[i]
+            let key = lhs_seq[i]
             result.push(
               Some(
-                Delete(JsonDiff::descalarize(key, scalar_values1, originals1)),
+                Delete(
+                  JsonDiff::descalarize(key, lhs_scalar_values, lhs_originals),
+                ),
               ),
             )
             score -= 5.0
           }
           for i = opcode.second_start; i < opcode.second_end; i = i + 1 {
-            let key = seq2[i]
+            let key = rhs_seq[i]
             result.push(
               Some(
-                Insert(JsonDiff::descalarize(key, scalar_values2, originals2)),
+                Insert(
+                  JsonDiff::descalarize(key, rhs_scalar_values, rhs_originals),
+                ),
               ),
             )
             score -= 5.0
@@ -365,18 +382,18 @@ fn JsonDiff::array_diff(
 
 ///|
 fn JsonDiff::diff_with_score(
-  json1 : Json,
-  json2 : Json,
+  lhs : Json,
+  rhs : Json,
   keys_only : Bool,
 ) -> JsonDiff {
-  match (json1, json2) {
+  match (lhs, rhs) {
     (Json::Object(lhs), Json::Object(rhs)) =>
       JsonDiff::object_diff(lhs, rhs, keys_only)
-    (Json::Array(array1), Json::Array(array2)) =>
-      JsonDiff::array_diff(array1, array2, keys_only)
+    (Json::Array(lhs), Json::Array(rhs)) =>
+      JsonDiff::array_diff(lhs, rhs, keys_only)
     _ =>
-      if !keys_only && json1 != json2 {
-        JsonDiff::{ score: 0.0, diff: Some(Replace(old=json1, new=json2)) }
+      if !keys_only && lhs != rhs {
+        JsonDiff::{ score: 0.0, diff: Some(Replace(old=lhs, new=rhs)) }
       } else {
         JsonDiff::{ score: 100.0, diff: None }
       }
