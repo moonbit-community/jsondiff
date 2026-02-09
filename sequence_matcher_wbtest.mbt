@@ -186,3 +186,27 @@ test "SequenceMatcher - popular elements optimization" {
   assert_eq(opcodes.length(), 1)
   assert_true(opcodes[0].tag == Equal)
 }
+
+///|
+test "SequenceMatcher - candidate index range guards" {
+  let first = ["x", "k", "x"]
+  let second = ["x", "k", "x", "k", "x"]
+  let matcher = SequenceMatcher::new(first, second)
+  let m = matcher.find_longest_match(0, first.length(), 1, 4)
+  assert_true(m.size > 0)
+}
+
+///|
+test "SequenceMatcher - backward and forward extension" {
+  let seq1 = Array::makei(220, fn(i) { "u\{i}" })
+  let seq2 = Array::makei(220, fn(i) { "u\{i}" })
+  for i in 100..<110 {
+    seq1[i] = "hot"
+    seq2[i] = "hot"
+  }
+  let matcher = SequenceMatcher::new(seq1, seq2)
+  let m = matcher.find_longest_match(90, 120, 90, 120)
+  assert_eq(m.first_start, 90)
+  assert_eq(m.second_start, 90)
+  assert_eq(m.size, 30)
+}

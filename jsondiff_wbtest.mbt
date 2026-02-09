@@ -271,3 +271,44 @@ test "array of object keys" {
     None,
   )
 }
+
+///|
+test "diff_string none and check_type mismatch" {
+  assert_eq(JsonDiff::diff_string({ "a": 1 }, { "a": 1 }), None)
+  assert_eq(JsonDiff::check_type(1, "1"), false)
+}
+
+///|
+test "keys_only replace yields modification when keys differ" {
+  let diff = JsonDiff::diff([{ "a": 1 }], [{ "b": 1 }], keys_only=true).diff
+  assert_true(diff is Some(_))
+}
+
+///|
+test "stringify array json values and terminal colors" {
+  inspect(
+    JsonDiff::diff_string({ "arr": [1, 2] }, {}).unwrap(),
+    content=(
+      #| {
+      #|-  arr: [
+      #|-    1
+      #|-    2
+      #|-  ]
+      #| }
+    ),
+  )
+  inspect(
+    JsonDiff::diff_string(1, 2, terminal=true).unwrap(),
+    content="\u001B[31m-1\u001B[39m\n\u001B[32m+2\u001B[39m",
+  )
+  inspect(
+    JsonDiff::diff_string({ "keep": 1 }, { "keep": 2 }, terminal=true).unwrap(),
+    content=" {\n\u001B[31m-  keep: 1\u001B[39m\n\u001B[32m+  keep: 2\u001B[39m\n }",
+  )
+}
+
+///|
+test "panic get_scalar missing key aborts" {
+  let scalar_values : Map[String, Json] = Map::new()
+  ignore(JsonDiff::get_scalar("missing", scalar_values))
+}
