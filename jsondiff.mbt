@@ -95,7 +95,7 @@ fn JsonDiff::object_diff(
       if change is Some(change_value) {
         diff[key] = change_value
       }
-      score += (subscore / 5.0).clamp(-10.0, 20.0)
+      score += (subscore / 5.0).clamp(min=-10.0, max=20.0)
     }
   }
   if diff.is_empty() && deleted.is_empty() && added.is_empty() {
@@ -398,23 +398,4 @@ fn JsonDiff::diff_with_score(
         JsonDiff::{ score: 100.0, diff: None }
       }
   }
-}
-
-///|
-fn Double::clamp(self : Double, min : Double, max : Double) -> Double {
-  if self < min {
-    return min
-  }
-  if self > max {
-    return max
-  }
-  return self
-}
-
-///|
-test {
-  inspect((-3.0).clamp(-2.0, 1.0), content="-2")
-  inspect(0.0.clamp(-2.0, 1.0), content="0")
-  inspect(2.0.clamp(-2.0, 1.0), content="1")
-  inspect(@double.not_a_number.clamp(-2.0, 1.0), content="NaN")
 }
