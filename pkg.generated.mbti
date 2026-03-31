@@ -6,17 +6,13 @@ package "moonbit-community/jsondiff"
 // Errors
 
 // Types and methods
-type JsonArrayEdit
-pub impl Eq for JsonArrayEdit
-pub impl Show for JsonArrayEdit
+type JsonArrayEdit derive(Eq, Show)
 
 type JsonDiff
 pub fn JsonDiff::diff(Json, Json, keys_only? : Bool) -> Self
 pub fn JsonDiff::diff_string(Json, Json, keys_only? : Bool, terminal? : Bool) -> String?
 
-type JsonEdit
-pub impl Eq for JsonEdit
-pub impl Show for JsonEdit
+type JsonEdit derive(Eq, Show)
 
 // Type aliases
 
