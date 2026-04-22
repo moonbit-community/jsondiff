@@ -29,7 +29,7 @@ jobs:
           git submodule init
           git submodule update
           moon update
-          moon install
+          moon check --deny-warn
 
       - name: moon check
         run: moon check
