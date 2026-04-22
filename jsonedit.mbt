@@ -7,7 +7,12 @@ enum JsonEdit {
   )
   Array(Array[JsonArrayEdit?])
   Replace(old~ : Json, new~ : Json)
-} derive(Show, Eq)
+} derive(Debug, Eq)
+
+///|
+pub impl Show for JsonEdit with output(self, logger) {
+  logger.write_object(@debug.to_repr(self))
+}
 
 ///|
 enum JsonArrayEdit {
@@ -15,7 +20,7 @@ enum JsonArrayEdit {
   NoChange(Json)
   Delete(Json)
   Insert(Json)
-} derive(Show, Eq)
+} derive(Debug, Eq)
 
 ///|
 impl ToJson for JsonEdit with to_json(self) {
