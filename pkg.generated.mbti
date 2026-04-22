@@ -1,18 +1,23 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbit-community/jsondiff"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 
 // Errors
 
 // Types and methods
-type JsonArrayEdit derive(Eq, Show)
+type JsonArrayEdit derive(Eq, @debug.Debug)
 
 type JsonDiff
 pub fn JsonDiff::diff(Json, Json, keys_only? : Bool) -> Self
 pub fn JsonDiff::diff_string(Json, Json, keys_only? : Bool, terminal? : Bool) -> String?
 
-type JsonEdit derive(Eq, Show)
+type JsonEdit derive(Eq, @debug.Debug)
+pub impl Show for JsonEdit
 
 // Type aliases
 
