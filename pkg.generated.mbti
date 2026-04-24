@@ -17,7 +17,6 @@ pub fn JsonDiff::diff(Json, Json, keys_only? : Bool) -> Self
 pub fn JsonDiff::diff_string(Json, Json, keys_only? : Bool, terminal? : Bool) -> String?
 
 type JsonEdit derive(Eq, @debug.Debug)
-pub impl Show for JsonEdit
 
 // Type aliases
 

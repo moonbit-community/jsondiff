@@ -10,11 +10,6 @@ enum JsonEdit {
 } derive(Debug, Eq)
 
 ///|
-pub impl Show for JsonEdit with output(self, logger) {
-  logger.write_object(@debug.to_repr(self))
-}
-
-///|
 enum JsonArrayEdit {
   Modification(JsonEdit)
   NoChange(Json)

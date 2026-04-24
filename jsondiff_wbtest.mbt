@@ -1,7 +1,7 @@
 ///|
 test "test scalar" {
-  assert_eq(JsonDiff::diff(42, 42).diff, None)
-  assert_eq(JsonDiff::diff("foo", "foo").diff, None)
+  @debug.assert_eq(JsonDiff::diff(42, 42).diff, None)
+  @debug.assert_eq(JsonDiff::diff("foo", "foo").diff, None)
   json_inspect(JsonDiff::diff(42, 10).diff, content=[
     { "__old": 42, "__new": 10 },
   ])
@@ -9,8 +9,8 @@ test "test scalar" {
 
 ///|
 test "test objects" {
-  assert_eq(JsonDiff::diff({}, {}, keys_only=false).diff, None)
-  assert_eq(
+  @debug.assert_eq(JsonDiff::diff({}, {}, keys_only=false).diff, None)
+  @debug.assert_eq(
     JsonDiff::diff({ "foo": 42, "bar": 10 }, { "foo": 42, "bar": 10 }).diff,
     None,
   )
@@ -35,16 +35,16 @@ test "test objects" {
 
 ///|
 test "array of scalars" {
-  assert_eq(JsonDiff::diff([10, 20, 30], [10, 20, 30]).diff, None)
-  assert_eq(
+  @debug.assert_eq(JsonDiff::diff([10, 20, 30], [10, 20, 30]).diff, None)
+  @debug.assert_eq(
     JsonDiff::diff([10, 20, 30], [10, 30]).diff.map(edit => edit.to_json()),
     Some([[" ", 10], ["-", 20], [" ", 30]]),
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff([10, 30], [10, 20, 30]).diff.map(edit => edit.to_json()),
     Some([[" ", 10], ["+", 20], [" ", 30]]),
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff([10, 20], [10, 20, 30]).diff.map(edit => edit.to_json()),
     Some([[" ", 10], [" ", 20], ["+", 30]]),
   )
@@ -52,7 +52,7 @@ test "array of scalars" {
 
 ///|
 test "array of objects" {
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff([{ "foo": 10 }, { "foo": 20 }, { "foo": 30 }], [
       { "foo": 10 },
       { "foo": 20 },
@@ -60,10 +60,10 @@ test "array of objects" {
     ]).diff,
     None,
   )
-  assert_eq(JsonDiff::diff([{}], [{}]).diff, None)
-  assert_eq(JsonDiff::diff([[]], [[]]).diff, None)
-  assert_eq(JsonDiff::diff([1, null, null], [1, null, null]).diff, None)
-  assert_eq(
+  @debug.assert_eq(JsonDiff::diff([{}], [{}]).diff, None)
+  @debug.assert_eq(JsonDiff::diff([[]], [[]]).diff, None)
+  @debug.assert_eq(JsonDiff::diff([1, null, null], [1, null, null]).diff, None)
+  @debug.assert_eq(
     JsonDiff::diff([{ "a": 1, "b": 2 }, { "a": 1, "b": 2 }], [
       { "a": 1, "b": 2 },
       { "a": 1, "b": 2 },
@@ -158,8 +158,8 @@ test "array of objects" {
 
 ///|
 test "scalar keys" {
-  assert_eq(JsonDiff::diff(42, 42, keys_only=true).diff, None)
-  assert_eq(
+  @debug.assert_eq(JsonDiff::diff(42, 42, keys_only=true).diff, None)
+  @debug.assert_eq(
     JsonDiff::diff(
       { "foo": 42, "bar": 10 },
       { "foo": 42, "bar": 10 },
@@ -167,7 +167,7 @@ test "scalar keys" {
     ).diff,
     None,
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff(
       { "foo": 42, "bar": { "bbbar": 10, "bbboz": 11 } },
       { "foo": 42, "bar": { "bbbar": 10, "bbboz": 11 } },
@@ -183,11 +183,11 @@ test "scalar keys" {
     JsonDiff::diff({ "bar": 10 }, { "foo": 42, "bar": 10 }, keys_only=true).diff,
     content=[{ "foo__added": 42 }],
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff({ "foo": 42 }, { "foo": 10 }, keys_only=true).diff,
     None,
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff(
       { "foo": 42, "bar": { "bbbar": 10 } },
       { "foo": 42, "bar": { "bbbar": 12 } },
@@ -207,11 +207,11 @@ test "scalar keys" {
 
 ///|
 test "array of scalar keys" {
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff([10, 20, 30], [10, 20, 30], keys_only=true).diff,
     None,
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff([10, 20, 30], [10, 42, 30], keys_only=true).diff,
     None,
   )
@@ -228,7 +228,7 @@ test "array of scalar keys" {
 
 ///|
 test "array of object keys" {
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff(
       [{ "foo": 10, "foo": 20, "foo": 30 }],
       [{ "foo": 10, "foo": 20, "foo": 30 }],
@@ -236,9 +236,9 @@ test "array of object keys" {
     ).diff,
     None,
   )
-  assert_eq(JsonDiff::diff([{}], [{}], keys_only=true).diff, None)
-  assert_eq(JsonDiff::diff([[]], [[]], keys_only=true).diff, None)
-  assert_eq(
+  @debug.assert_eq(JsonDiff::diff([{}], [{}], keys_only=true).diff, None)
+  @debug.assert_eq(JsonDiff::diff([[]], [[]], keys_only=true).diff, None)
+  @debug.assert_eq(
     JsonDiff::diff(
       [{ "a": 1, "b": 2 }, { "a": 1, "b": 2 }],
       [{ "a": 1, "b": 2 }, { "a": 1, "b": 2 }],
@@ -254,7 +254,7 @@ test "array of object keys" {
     ).diff,
     content=[[[" "], ["+", { "foo": 20 }], [" "]]],
   )
-  assert_eq(
+  @debug.assert_eq(
     JsonDiff::diff(
       [
         { "foo": 10, "bar": { "bbbar": 10, "bbboz": 11 } },
@@ -274,8 +274,8 @@ test "array of object keys" {
 
 ///|
 test "diff_string none and check_type mismatch" {
-  assert_eq(JsonDiff::diff_string({ "a": 1 }, { "a": 1 }), None)
-  assert_eq(JsonDiff::check_type(1, "1"), false)
+  @debug.assert_eq(JsonDiff::diff_string({ "a": 1 }, { "a": 1 }), None)
+  @debug.assert_eq(JsonDiff::check_type(1, "1"), false)
 }
 
 ///|
