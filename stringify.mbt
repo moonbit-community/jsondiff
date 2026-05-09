@@ -88,7 +88,7 @@ fn substringify(
 }
 
 ///|
-let output_colorful_text_for_terminal : Ref[Bool] = Ref::new(false)
+let output_colorful_text_for_terminal : Ref[Bool] = Ref(false)
 
 ///|
 fn Array::push_line(self : Array[String], tag : String, line : String) -> Unit {

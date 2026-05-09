@@ -80,7 +80,7 @@ fn[T : Eq + Hash] SequenceMatcher::new(
   let matcher = SequenceMatcher::{
     first_sequence,
     second_sequence,
-    second_sequence_elements: @hashmap.HashMap::new(),
+    second_sequence_elements: @hashmap.HashMap([]),
   }
   matcher.set_seqs(first_sequence, second_sequence)
   matcher
@@ -131,7 +131,7 @@ fn[T : Eq + Hash] SequenceMatcher::chain_second_seq(
   self : SequenceMatcher[T],
 ) -> Unit {
   let second_sequence = self.second_sequence
-  let mut second_sequence_elements = @hashmap.HashMap::new()
+  let mut second_sequence_elements = @hashmap.HashMap([])
   for i, item in second_sequence.iter2() {
     // Collect all indices where each element appears.
     let counter = second_sequence_elements.get_or_init(item, () => Array::new())
@@ -143,7 +143,7 @@ fn[T : Eq + Hash] SequenceMatcher::chain_second_seq(
   let len = second_sequence.length()
   if len >= 200 {
     let test_len = (len.to_double() / 100.0).floor().to_int() + 1
-    let after_filter = @hashmap.HashMap::new()
+    let after_filter = @hashmap.HashMap([])
     second_sequence_elements
     .iter()
     .each(fn(entry) {
@@ -179,13 +179,13 @@ fn[T : Eq + Hash] SequenceMatcher::find_longest_match(
   let mut best_i = first_start
   let mut best_j = second_start
   let mut best_size = 0
-  let mut j2len = @hashmap.HashMap::new()
+  let mut j2len = @hashmap.HashMap([])
 
   // DP over diagonals: if first[i] == second[j],
   // new_j2len[j] = j2len[j - 1] + 1.
   for i = first_start; i < first_end; i = i + 1 {
     let item = first_sequence[i]
-    let new_j2len = @hashmap.HashMap::new()
+    let new_j2len = @hashmap.HashMap([])
     match second_sequence_elements.get(item) {
       Some(indexes) =>
         for j in indexes {
