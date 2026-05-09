@@ -64,9 +64,9 @@ fn JsonDiff::object_diff(
   rhs : Map[String, Json],
   keys_only : Bool,
 ) -> JsonDiff {
-  let diff = Map::new()
-  let deleted = Map::new()
-  let added = Map::new()
+  let diff = Map([])
+  let deleted = Map([])
+  let added = Map([])
   let mut score = 0.0
 
   // Check for deleted keys
@@ -234,9 +234,9 @@ fn JsonDiff::array_diff(
   rhs : Array[Json],
   keys_only : Bool,
 ) -> JsonDiff {
-  let counter = Ref::new(1)
-  let lhs_originals = Map::new()
-  let lhs_scalar_values = Map::new()
+  let counter = Ref(1)
+  let lhs_originals = Map([])
+  let lhs_scalar_values = Map([])
   let lhs_seq = JsonDiff::scalarize(
     counter,
     lhs,
@@ -244,8 +244,8 @@ fn JsonDiff::array_diff(
     lhs_originals,
     None,
   )
-  let rhs_originals = Map::new()
-  let rhs_scalar_values = Map::new()
+  let rhs_originals = Map([])
+  let rhs_scalar_values = Map([])
   let rhs_seq = JsonDiff::scalarize(
     counter,
     rhs,

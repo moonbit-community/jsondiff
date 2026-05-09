@@ -309,6 +309,6 @@ test "stringify array json values and terminal colors" {
 
 ///|
 test "panic get_scalar missing key aborts" {
-  let scalar_values : Map[String, Json] = Map::new()
+  let scalar_values : Map[String, Json] = Map([])
   ignore(JsonDiff::get_scalar("missing", scalar_values))
 }
