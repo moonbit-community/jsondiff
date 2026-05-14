@@ -81,12 +81,12 @@ test "SequenceMatcher - complete replacement" {
   inspect(
     print_opcodes(opcodes, old~, new~),
     content=(
-      #|- "a"
-      #|- "b"
-      #|- "c"
-      #|+ "x"
-      #|+ "y"
-      #|+ "z"
+      #|- a
+      #|- b
+      #|- c
+      #|+ x
+      #|+ y
+      #|+ z
       #|
     ),
   )
@@ -102,10 +102,10 @@ test "SequenceMatcher - insertion at beginning" {
   inspect(
     print_opcodes(opcodes, old~, new~),
     content=(
-      #|+ "a"
-      #|  "b"
-      #|  "c"
-      #|  "d"
+      #|+ a
+      #|  b
+      #|  c
+      #|  d
       #|
     ),
   )
@@ -123,10 +123,10 @@ test "SequenceMatcher - deletion at end" {
   inspect(
     print_opcodes(opcodes, old~, new~),
     content=(
-      #|  "a"
-      #|  "b"
-      #|- "c"
-      #|- "d"
+      #|  a
+      #|  b
+      #|- c
+      #|- d
       #|
     ),
   )
@@ -142,14 +142,14 @@ test "SequenceMatcher - complex mixed operations" {
   inspect(
     print_opcodes(opcodes, old~, new~),
     content=(
-      #|  "a"
-      #|- "b"
-      #|- "c"
-      #|+ "x"
-      #|+ "y"
-      #|  "d"
-      #|  "e"
-      #|+ "f"
+      #|  a
+      #|- b
+      #|- c
+      #|+ x
+      #|+ y
+      #|  d
+      #|  e
+      #|+ f
       #|
     ),
   )
@@ -165,12 +165,12 @@ test "SequenceMatcher - duplicates" {
   inspect(
     print_opcodes(opcodes, old~, new~),
     content=(
-      #|+ "a"
-      #|  "a"
-      #|  "b"
-      #|+ "b"
-      #|+ "b"
-      #|  "c"
+      #|+ a
+      #|  a
+      #|  b
+      #|+ b
+      #|+ b
+      #|  c
       #|
     ),
   )
