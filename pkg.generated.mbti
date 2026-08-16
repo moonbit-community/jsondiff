@@ -11,14 +11,20 @@ import {
 
 // Types and methods
 type JsonArrayEdit derive(Eq, @debug.Debug)
+pub fn JsonArrayEdit::equal(Self, Self) -> Bool
+pub fn JsonArrayEdit::not_equal(Self, Self) -> Bool
+pub fn JsonArrayEdit::to_repr(Self) -> @debug.Repr
 
 type JsonDiff
 pub fn JsonDiff::diff(Json, Json, keys_only? : Bool) -> Self
 pub fn JsonDiff::diff_string(Json, Json, keys_only? : Bool, terminal? : Bool) -> String?
 
 type JsonEdit derive(Eq, @debug.Debug)
+pub fn JsonEdit::equal(Self, Self) -> Bool
+pub fn JsonEdit::not_equal(Self, Self) -> Bool
+pub fn JsonEdit::to_json(Self) -> Json
+pub fn JsonEdit::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 
 // Traits
-
