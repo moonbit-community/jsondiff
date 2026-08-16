@@ -18,10 +18,10 @@ enum JsonArrayEdit {
 } derive(Debug, Eq)
 
 ///|
-impl ToJson for JsonEdit with to_json(self) {
+impl ToJson for JsonEdit with fn to_json(self) {
   match self {
     Object(object, added~, deleted~) => {
-      let result = {}
+      let result = Map([])
       for key, value in deleted.iter2() {
         result[key + "__deleted"] = value
       }
