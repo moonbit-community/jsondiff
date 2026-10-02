@@ -12,7 +12,7 @@ test {
     "new_key": true,
   }
   inspect(
-    JsonDiff::diff_string(old, new).unwrap(),
+    @jsondiff.JsonDiff::diff_string(old, new).unwrap(),
     content=(
       #| {
       #|+  new_key: true

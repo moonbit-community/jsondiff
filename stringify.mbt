@@ -1,7 +1,7 @@
 ///|
 fn JsonEdit::stringify(self : JsonEdit, terminal~ : Bool) -> String {
   output_colorful_text_for_terminal.val = terminal
-  let output = Array::new()
+  let output = []
   substringify(None, self, output, " ", 0)
   return output.join("\n")
 }
