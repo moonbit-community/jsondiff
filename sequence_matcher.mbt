@@ -14,7 +14,7 @@ priv struct Match {
 ///|
 /// Build a `Match` value.
 fn Match::new(first_start : Int, second_start : Int, size : Int) -> Match {
-  Match::{ first_start, second_start, size }
+  Match::{ first_start, second_start, size, }
 }
 
 ///|
@@ -54,7 +54,7 @@ fn OpCode::new(
   second_start : Int,
   second_end : Int,
 ) -> OpCode {
-  OpCode::{ tag, first_start, first_end, second_start, second_end }
+  OpCode::{ tag, first_start, first_end, second_start, second_end, }
 }
 
 ///|
