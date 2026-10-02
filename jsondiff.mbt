@@ -168,7 +168,7 @@ fn JsonDiff::scalarize(
   originals : Map[String, Json],
   fuzzy_originals : Map[String, Json]?,
 ) -> Array[String] {
-  let output_array = Array::new()
+  let output_array = []
   for index, item in array.iter2() {
     let mut value : String? = match item {
       Json::Object(_) => None
@@ -254,7 +254,7 @@ fn JsonDiff::array_diff(
     Some(lhs_originals),
   )
   let opcodes = SequenceMatcher::new(lhs_seq, rhs_seq).get_opcodes()
-  let result = Array::new()
+  let result = []
   let mut score = 0.0
   let mut all_equal = true
   for opcode in opcodes {

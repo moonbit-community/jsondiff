@@ -10,6 +10,14 @@ enum JsonEdit {
 } derive(Debug, Eq)
 
 ///|
+#deprecated("`JsonEdit` is internal to jsondiff")
+pub extend JsonEdit with @debug.Debug::{to_repr}
+
+///|
+#deprecated("`JsonEdit` is internal to jsondiff")
+pub extend JsonEdit with Eq::{not_equal, equal}
+
+///|
 enum JsonArrayEdit {
   Modification(JsonEdit)
   NoChange(Json)
@@ -18,10 +26,18 @@ enum JsonArrayEdit {
 } derive(Debug, Eq)
 
 ///|
+#deprecated("`JsonArrayEdit` is internal to jsondiff")
+pub extend JsonArrayEdit with @debug.Debug::{to_repr}
+
+///|
+#deprecated("`JsonArrayEdit` is internal to jsondiff")
+pub extend JsonArrayEdit with Eq::{not_equal, equal}
+
+///|
 impl ToJson for JsonEdit with fn to_json(self) {
   match self {
     Object(object, added~, deleted~) => {
-      let result = {}
+      let result = Map([])
       for key, value in deleted.iter2() {
         result[key + "__deleted"] = value
       }
@@ -29,7 +45,7 @@ impl ToJson for JsonEdit with fn to_json(self) {
         result[key + "__added"] = value
       }
       for key, value in object.iter2() {
-        result[key] = value.to_json()
+        result[key] = ToJson::to_json(value)
       }
       return Json::object(result)
     }

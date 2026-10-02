@@ -37,15 +37,15 @@ test "test objects" {
 test "array of scalars" {
   @debug.assert_eq(JsonDiff::diff([10, 20, 30], [10, 20, 30]).diff, None)
   @debug.assert_eq(
-    JsonDiff::diff([10, 20, 30], [10, 30]).diff.map(edit => edit.to_json()),
+    JsonDiff::diff([10, 20, 30], [10, 30]).diff.map(ToJson::to_json),
     Some([[" ", 10], ["-", 20], [" ", 30]]),
   )
   @debug.assert_eq(
-    JsonDiff::diff([10, 30], [10, 20, 30]).diff.map(edit => edit.to_json()),
+    JsonDiff::diff([10, 30], [10, 20, 30]).diff.map(ToJson::to_json),
     Some([[" ", 10], ["+", 20], [" ", 30]]),
   )
   @debug.assert_eq(
-    JsonDiff::diff([10, 20], [10, 20, 30]).diff.map(edit => edit.to_json()),
+    JsonDiff::diff([10, 20], [10, 20, 30]).diff.map(ToJson::to_json),
     Some([[" ", 10], [" ", 20], ["+", 30]]),
   )
 }

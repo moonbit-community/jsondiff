@@ -4,7 +4,7 @@ fn[T : Show] print_opcodes(
   old~ : Array[T],
   new~ : Array[T],
 ) -> String {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for opcode in opcodes {
     match opcode.tag {
       Delete =>

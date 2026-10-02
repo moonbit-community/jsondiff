@@ -134,7 +134,7 @@ fn[T : Eq + Hash] SequenceMatcher::chain_second_seq(
   let mut second_sequence_elements = @hashmap.HashMap([])
   for i, item in second_sequence.iter2() {
     // Collect all indices where each element appears.
-    let counter = second_sequence_elements.get_or_init(item, () => Array::new())
+    let counter = second_sequence_elements.get_or_init(item, () => [])
     counter.push(i)
   }
 
@@ -250,8 +250,8 @@ fn[T : Eq + Hash] SequenceMatcher::get_opcodes(
 ) -> Array[OpCode] {
   let first_length = self.first_sequence.length()
   let second_length = self.second_sequence.length()
-  let matches = Array::new()
-  let queue = Array::new()
+  let matches = []
+  let queue = []
   queue.push((0, first_length, 0, second_length))
 
   // Split problem recursively (implemented with an explicit stack/queue).
@@ -298,7 +298,7 @@ fn[T : Eq + Hash] SequenceMatcher::get_opcodes(
   let mut first_start = 0
   let mut second_start = 0
   let mut size = 0
-  let non_adjacent = Array::new()
+  let non_adjacent = []
   for m in matches {
     if first_start + size == m.first_start &&
       second_start + size == m.second_start {
@@ -316,7 +316,7 @@ fn[T : Eq + Hash] SequenceMatcher::get_opcodes(
     non_adjacent.push(Match::new(first_start, second_start, size))
   }
   non_adjacent.push(Match::new(first_length, second_length, 0))
-  let opcodes = Array::new()
+  let opcodes = []
   let mut i = 0
   let mut j = 0
 
