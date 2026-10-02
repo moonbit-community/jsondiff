@@ -24,7 +24,7 @@ fn BestMatch::new(
   key : String,
   index_distance : UInt,
 ) -> BestMatch {
-  BestMatch::{ score, key, index_distance }
+  BestMatch::{ score, key, index_distance, }
 }
 
 ///|
@@ -89,7 +89,7 @@ fn JsonDiff::object_diff(
   for key, value in lhs.iter2() {
     if rhs.get(key) is Some(rhs_value) {
       score += 20.0
-      let { score: subscore, diff: change } = JsonDiff::diff_with_score(
+      let { score: subscore, diff: change, } = JsonDiff::diff_with_score(
         value, rhs_value, keys_only,
       )
       if change is Some(change_value) {
@@ -105,7 +105,7 @@ fn JsonDiff::object_diff(
     }
   } else {
     let output = JsonEdit::Object(diff, deleted~, added~)
-    JsonDiff::{ score: @cmp.maximum(score, 0.0), diff: Some(output) }
+    JsonDiff::{ score: @cmp.maximum(score, 0.0), diff: Some(output), }
   }
 }
 
@@ -138,7 +138,7 @@ fn JsonDiff::find_matching_object(
       .reinterpret_as_uint()
       .sub(index.reinterpret_as_uint()) // wrapped sub
     if JsonDiff::check_type(item, candidate) {
-      let { score, diff: _ } = JsonDiff::diff(item, candidate, keys_only=false)
+      let { score, diff: _, } = JsonDiff::diff(item, candidate, keys_only=false)
 
       // choose higher score candidate
       // or closer candidate with same score
@@ -279,7 +279,7 @@ fn JsonDiff::array_diff(
             let rhs_item = JsonDiff::descalarize(
               key, rhs_scalar_values, rhs_originals,
             )
-            let { score: _, diff: change } = JsonDiff::diff(
+            let { score: _, diff: change, } = JsonDiff::diff(
               lhs_item,
               rhs_item,
               keys_only~,
@@ -330,7 +330,7 @@ fn JsonDiff::array_diff(
           for offset = 0; offset < min_len; offset = offset + 1 {
             let lhs_key = lhs_seq[opcode.first_start + offset]
             let rhs_key = rhs_seq[opcode.second_start + offset]
-            let { score: _, diff: change } = JsonDiff::diff(
+            let { score: _, diff: change, } = JsonDiff::diff(
               JsonDiff::descalarize(lhs_key, lhs_scalar_values, lhs_originals),
               JsonDiff::descalarize(rhs_key, rhs_scalar_values, rhs_originals),
               keys_only~,
@@ -371,7 +371,7 @@ fn JsonDiff::array_diff(
     }
   }
   if all_equal || opcodes.is_empty() {
-    JsonDiff::{ score: 100.0, diff: None }
+    JsonDiff::{ score: 100.0, diff: None, }
   } else {
     JsonDiff::{
       score: @cmp.maximum(score, 0.0),
@@ -393,9 +393,9 @@ fn JsonDiff::diff_with_score(
       JsonDiff::array_diff(lhs, rhs, keys_only)
     _ =>
       if !keys_only && lhs != rhs {
-        JsonDiff::{ score: 0.0, diff: Some(Replace(old=lhs, new=rhs)) }
+        JsonDiff::{ score: 0.0, diff: Some(Replace(old=lhs, new=rhs)), }
       } else {
-        JsonDiff::{ score: 100.0, diff: None }
+        JsonDiff::{ score: 100.0, diff: None, }
       }
   }
 }
