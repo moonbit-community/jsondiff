@@ -6,14 +6,14 @@
 /// - In the second sequence: `[second_start, second_start + size)`
 #valtype
 priv struct Match {
-  first_start : Int
-  second_start : Int
-  size : Int
+  first_start : Int32
+  second_start : Int32
+  size : Int32
 }
 
 ///|
 /// Build a `Match` value.
-fn Match::new(first_start : Int, second_start : Int, size : Int) -> Match {
+fn Match::new(first_start : Int32, second_start : Int32, size : Int32) -> Match {
   Match::{ first_start, second_start, size, }
 }
 
@@ -39,20 +39,20 @@ priv enum OpTag {
 /// - second sequence range: `[second_start, second_end)`
 priv struct OpCode {
   tag : OpTag
-  first_start : Int
-  first_end : Int
-  second_start : Int
-  second_end : Int
+  first_start : Int32
+  first_end : Int32
+  second_start : Int32
+  second_end : Int32
 }
 
 ///|
 /// Build an `OpCode` value.
 fn OpCode::new(
   tag : OpTag,
-  first_start : Int,
-  first_end : Int,
-  second_start : Int,
-  second_end : Int,
+  first_start : Int32,
+  first_end : Int32,
+  second_start : Int32,
+  second_end : Int32,
 ) -> OpCode {
   OpCode::{ tag, first_start, first_end, second_start, second_end, }
 }
@@ -65,7 +65,7 @@ fn OpCode::new(
 priv struct SequenceMatcher[T] {
   mut first_sequence : Array[T]
   mut second_sequence : Array[T]
-  mut second_sequence_elements : @hashmap.HashMap[T, Array[Int]]
+  mut second_sequence_elements : @hashmap.HashMap[T, Array[Int32]]
 }
 
 ///|
@@ -168,10 +168,10 @@ fn[T : Eq + Hash] SequenceMatcher::chain_second_seq(
 /// suffix match ending at the current `i` and each `j`.
 fn[T : Eq + Hash] SequenceMatcher::find_longest_match(
   self : SequenceMatcher[T],
-  first_start : Int,
-  first_end : Int,
-  second_start : Int,
-  second_end : Int,
+  first_start : Int32,
+  first_end : Int32,
+  second_start : Int32,
+  second_end : Int32,
 ) -> Match {
   let first_sequence = self.first_sequence
   let second_sequence = self.second_sequence

@@ -15,14 +15,14 @@ struct JsonDiff {
 priv struct BestMatch {
   score : Double
   key : String
-  index_distance : UInt
+  index_distance : UInt32
 }
 
 ///|
 fn BestMatch::new(
   score : Double,
   key : String,
-  index_distance : UInt,
+  index_distance : UInt32,
 ) -> BestMatch {
   BestMatch::{ score, key, index_distance, }
 }
@@ -32,7 +32,7 @@ fn BestMatch::new(
 pub fn JsonDiff::diff(
   lhs : Json,
   rhs : Json,
-  keys_only? : Bool = false,
+  keys_only~ : Bool = false,
 ) -> JsonDiff {
   JsonDiff::diff_with_score(lhs, rhs, keys_only)
 }
@@ -43,8 +43,8 @@ pub fn JsonDiff::diff(
 pub fn JsonDiff::diff_string(
   lhs : Json,
   rhs : Json,
-  keys_only? : Bool = false,
-  terminal? : Bool = false,
+  keys_only~ : Bool = false,
+  terminal~ : Bool = false,
 ) -> String? {
   let jsondiff = JsonDiff::diff(lhs, rhs, keys_only~)
   jsondiff.stringify(terminal~)
@@ -126,7 +126,7 @@ fn JsonDiff::check_type(lhs : Json, rhs : Json) -> Bool {
 ///|
 fn JsonDiff::find_matching_object(
   item : Json,
-  index : Int,
+  index : Int32,
   fuzzy_originals : Map[String, Json],
 ) -> BestMatch? {
   let mut best_match : BestMatch? = None
@@ -162,7 +162,7 @@ fn JsonDiff::find_matching_object(
 
 ///|
 fn JsonDiff::scalarize(
-  counter : Ref[Int],
+  counter : Ref[Int32],
   array : Array[Json],
   scalar_values : Map[String, Json],
   originals : Map[String, Json],
