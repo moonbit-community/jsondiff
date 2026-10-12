@@ -12,7 +12,7 @@ fn json_substringify(
   json : Json,
   output : Array[String],
   tag : String,
-  indent : Int,
+  indent : Int32,
 ) -> Unit {
   let prefix = if key is Some(key) { "\{key}: " } else { "" }
   let subindent = indent + 2
@@ -45,7 +45,7 @@ fn substringify(
   jsonedit : JsonEdit,
   output : Array[String],
   tag : String,
-  indent : Int,
+  indent : Int32,
 ) -> Unit {
   let prefix = if key is Some(key) { "\{key}: " } else { "" }
   let subindent = indent + 2

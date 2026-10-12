@@ -44,8 +44,8 @@ fn[T : Show] print_opcodes(
 
 ///|
 test "SequenceMatcher - empty sequences" {
-  let empty1 : Array[Int] = []
-  let empty2 : Array[Int] = []
+  let empty1 : Array[Int32] = []
+  let empty2 : Array[Int32] = []
   let matcher = SequenceMatcher::new(empty1, empty2)
   let opcodes = matcher.get_opcodes()
   assert_eq(opcodes.length(), 0)
